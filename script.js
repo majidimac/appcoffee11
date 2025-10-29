@@ -660,9 +660,9 @@ if (sections.bakwash) {
             rowWrapper.innerHTML += `
                 <div class="bean-row cafe-grid four-cols">
                     <div class="input-group"><input type="text" class="bean-name" placeholder="نوع دانه ${beanRowCount}"></div>
-                    <div class="input-group"><input type="number" class="bean-price" placeholder="قیمت (تومان/کیلو)"></div>
-                    <div class="input-group"><input type="number" class="bean-percentage" placeholder="درصد (%)" min="0" max="100"></div>
-                    <div class="input-group"><input type="number" class="bean-weight" placeholder="وزن (گرم)"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-price" placeholder="قیمت (تومان/کیلو)"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-percentage" placeholder="درصد (%)" min="0" max="100"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-weight" placeholder="وزن (گرم)"></div>
                 </div>
                 <button class="calc-button remove-bean-btn" style="background: var(--danger-color); font-size: 0.9rem; padding: 0.5rem; width: auto; margin-top: -1rem; align-self: center;">حذف</button>
             `;
