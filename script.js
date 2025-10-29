@@ -1,3 +1,9 @@
+/**
+ * Initializes the application after the DOM is fully loaded.
+ * This function sets up all the event listeners, calculators, and UI interactions.
+ * It ensures that all scripts run only after the entire HTML document has been parsed.
+ * @event DOMContentLoaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
 
     // ####################################
@@ -84,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * It sets the `data-theme` attribute on the `<html>` element, which triggers CSS changes.
      * It also updates the SVG icon in the theme toggler button to reflect the current theme (sun for dark, moon for light).
      * @param {string} theme - The theme to apply, either 'dark' or 'light'.
-     * @returns {void} This function does not return a value.
+     * @returns {void} This function does not return a a value.
      */
     const setTheme = theme => {
         const isDark = theme === 'dark';
