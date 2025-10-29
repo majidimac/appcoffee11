@@ -1,3 +1,9 @@
+/**
+ * Initializes the application after the DOM is fully loaded.
+ * This function sets up all the event listeners, calculators, and UI interactions.
+ * It ensures that all scripts run only after the entire HTML document has been parsed.
+ * @event DOMContentLoaded
+ */
 document.addEventListener('DOMContentLoaded', () => {
 
     // ####################################
@@ -84,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
      * It sets the `data-theme` attribute on the `<html>` element, which triggers CSS changes.
      * It also updates the SVG icon in the theme toggler button to reflect the current theme (sun for dark, moon for light).
      * @param {string} theme - The theme to apply, either 'dark' or 'light'.
-     * @returns {void} This function does not return a value.
+     * @returns {void} This function does not return a a value.
      */
     const setTheme = theme => {
         const isDark = theme === 'dark';
@@ -132,6 +138,60 @@ document.addEventListener('DOMContentLoaded', () => {
     buttons.back.forEach(button => {
         button.addEventListener('click', () => showSection('main-menu'));
     });
+
+    // ####################################
+    // Data Persistence Logic
+    // ####################################
+
+    /**
+     * Saves the value of a specific input field to localStorage.
+     * @param {string} id - The ID of the input element to save.
+     */
+    function saveInput(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            localStorage.setItem(id, element.value);
+        }
+    }
+
+    /**
+     * Loads the value of a specific input field from localStorage.
+     * @param {string} id - The ID of the input element to load.
+     */
+    function loadInput(id) {
+        const element = document.getElementById(id);
+        const savedValue = localStorage.getItem(id);
+        if (element && savedValue !== null) {
+            element.value = savedValue;
+        }
+    }
+
+    /**
+     * An array of input field IDs to be persisted across sessions.
+     * @type {string[]}
+     */
+    const persistInputIds = [
+        'greenPrice', 'roastWage', 'batchInput', 'batchOutput', 'totalGreen',
+        'costPerKG', 'sellPriceKG', 'costSingleShot', 'costDoubleShot',
+        'gramSingle', 'gramDouble', 'otherCostPerShot',
+        'salesSingle', 'salesDouble', 'salesMixKG',
+        'stage1-minutes', 'stage1-seconds', 'stage2-minutes', 'stage2-seconds',
+        'brand-name', 'social-id'
+    ];
+
+    /**
+     * Attaches event listeners to persist input fields and loads their initial values.
+     */
+    function initializePersistentInputs() {
+        persistInputIds.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                loadInput(id);
+                element.addEventListener('input', () => saveInput(id));
+            }
+        });
+    }
+
 
     // ####################################
     // Helper Functions
@@ -584,7 +644,7 @@ if (sections.bakwash) {
          * It also includes a "Remove" button. The function ensures a maximum of 5 rows can be added.
          * @returns {void} This function does not return a value.
          */
-        function createBeanRow() {
+        function createBeanRow(data = null) {
             if (beanRowsContainer.children.length >= 5) {
                 addBeanBtn.style.display = 'none';
                 return;
@@ -593,7 +653,6 @@ if (sections.bakwash) {
             const rowWrapper = document.createElement('div');
             rowWrapper.className = 'bean-row-wrapper';
 
-            // Add separator for all but the first row
             if (beanRowsContainer.children.length > 0) {
                 rowWrapper.innerHTML += '<hr>';
             }
@@ -601,14 +660,21 @@ if (sections.bakwash) {
             rowWrapper.innerHTML += `
                 <div class="bean-row cafe-grid four-cols">
                     <div class="input-group"><input type="text" class="bean-name" placeholder="نوع دانه ${beanRowCount}"></div>
-                    <div class="input-group"><input type="number" class="bean-price" placeholder="قیمت (تومان/کیلو)"></div>
-                    <div class="input-group"><input type="number" class="bean-percentage" placeholder="درصد (%)" min="0" max="100"></div>
-                    <div class="input-group"><input type="number" class="bean-weight" placeholder="وزن (گرم)"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-price" placeholder="قیمت (تومان/کیلو)"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-percentage" placeholder="درصد (%)" min="0" max="100"></div>
+                    <div class="input-group"><input type="number" inputmode="numeric" class="bean-weight" placeholder="وزن (گرم)"></div>
                 </div>
                 <button class="calc-button remove-bean-btn" style="background: var(--danger-color); font-size: 0.9rem; padding: 0.5rem; width: auto; margin-top: -1rem; align-self: center;">حذف</button>
             `;
 
             beanRowsContainer.appendChild(rowWrapper);
+
+            if (data) {
+                rowWrapper.querySelector('.bean-name').value = data.name || '';
+                rowWrapper.querySelector('.bean-price').value = data.price || '';
+                rowWrapper.querySelector('.bean-percentage').value = data.percentage || '';
+                rowWrapper.querySelector('.bean-weight').value = data.weight || '';
+            }
 
             rowWrapper.querySelector('.remove-bean-btn').addEventListener('click', () => {
                 rowWrapper.remove();
@@ -616,9 +682,18 @@ if (sections.bakwash) {
                     addBeanBtn.style.display = 'block';
                 }
                 updateTotalPercentage();
+                saveBeanMixData();
             });
 
-            rowWrapper.querySelector('.bean-percentage').addEventListener('input', updateTotalPercentage);
+            rowWrapper.querySelector('.bean-percentage').addEventListener('input', () => {
+                updateTotalPercentage();
+                saveBeanMixData();
+            });
+
+            // Also save on other input changes
+            ['.bean-name', '.bean-price', '.bean-weight'].forEach(selector => {
+                rowWrapper.querySelector(selector).addEventListener('input', saveBeanMixData);
+            });
         }
 
         /**
@@ -635,6 +710,37 @@ if (sections.bakwash) {
             });
             totalPercentageSpan.textContent = total.toFixed(0);
             totalPercentageSpan.style.color = (Math.round(total) === 100) ? '#28a745' : 'var(--danger-color)';
+        }
+
+        /**
+         * Saves the current state of the bean mix calculator to localStorage.
+         */
+        function saveBeanMixData() {
+            const rows = beanRowsContainer.querySelectorAll('.bean-row-wrapper');
+            const data = Array.from(rows).map(row => ({
+                name: row.querySelector('.bean-name').value,
+                price: row.querySelector('.bean-price').value,
+                percentage: row.querySelector('.bean-percentage').value,
+                weight: row.querySelector('.bean-weight').value,
+            }));
+            localStorage.setItem('beanMixData', JSON.stringify(data));
+        }
+
+        /**
+         * Loads the bean mix calculator data from localStorage and populates the UI.
+         */
+        function loadBeanMixData() {
+            const data = JSON.parse(localStorage.getItem('beanMixData'));
+            if (data && data.length > 0) {
+                beanRowsContainer.innerHTML = ''; // Clear existing rows
+                data.forEach(rowData => createBeanRow(rowData));
+            } else {
+                // If no data, ensure there is one default row
+                if (beanRowsContainer.children.length === 0) {
+                    createBeanRow();
+                }
+            }
+            updateTotalPercentage();
         }
 
         /**
@@ -718,8 +824,7 @@ if (sections.bakwash) {
         addBeanBtn.addEventListener('click', createBeanRow);
         calculateMixBtn.addEventListener('click', calculateMixPrice);
 
-        // Add initial row
-        createBeanRow();
+        loadBeanMixData();
     }
 
     // ####################################
@@ -762,6 +867,45 @@ if (sections.bakwash) {
             option.textContent = type;
             modalRoastTypeSelect.appendChild(option);
         });
+
+        /**
+         * Saves the current state of the price list to localStorage.
+         */
+        function savePriceListData() {
+            const coffeeRows = coffeeListContainer.querySelectorAll('.price-list-dynamic-row');
+            const powderRows = powderListContainer.querySelectorAll('.price-list-dynamic-row');
+
+            const coffeeData = Array.from(coffeeRows).map(row => ({
+                name: row.querySelector('span').textContent,
+                purchasePrice: row.dataset.purchasePrice,
+                profitPercent: row.dataset.profitPercent,
+                roastType: row.dataset.roastType,
+            }));
+
+            const powderData = Array.from(powderRows).map(row => ({
+                name: row.querySelector('span').textContent,
+                purchasePrice: row.dataset.purchasePrice,
+                profitPercent: row.dataset.profitPercent,
+            }));
+
+            localStorage.setItem('priceListCoffeeData', JSON.stringify(coffeeData));
+            localStorage.setItem('priceListPowderData', JSON.stringify(powderData));
+        }
+
+        /**
+         * Loads the price list data from localStorage and populates the UI.
+         */
+        function loadPriceListData() {
+            const coffeeData = JSON.parse(localStorage.getItem('priceListCoffeeData'));
+            const powderData = JSON.parse(localStorage.getItem('priceListPowderData'));
+
+            if (coffeeData) {
+                coffeeData.forEach(data => createCoffeeRow(data.name, data));
+            }
+            if (powderData) {
+                powderData.forEach(data => createPowderRow(data.name, data));
+            }
+        }
 
         /**
          * Displays a modal dialog for entering coffee or powder product details.
@@ -836,6 +980,7 @@ if (sections.bakwash) {
             }
 
             hideModal();
+            savePriceListData();
         }
 
         modalConfirmBtn.addEventListener('click', handleModalConfirm);
@@ -851,7 +996,7 @@ if (sections.bakwash) {
          * @param {string} coffeeType - The name of the coffee to add.
          * @returns {void} This function does not return a value.
          */
-        function createCoffeeRow(coffeeType) {
+        function createCoffeeRow(coffeeType, data = null) {
             const row = document.createElement('div');
             row.className = 'price-list-dynamic-row';
 
@@ -867,12 +1012,24 @@ if (sections.bakwash) {
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'حذف';
             removeBtn.className = 'calc-button remove-row-btn';
-            removeBtn.onclick = () => row.remove();
+            removeBtn.onclick = () => {
+                row.remove();
+                savePriceListData();
+            };
 
             row.append(coffeeName, priceDisplay, roastDisplay, removeBtn);
             coffeeListContainer.appendChild(row);
 
-            showModal(row, coffeeType);
+            if (data) {
+                row.dataset.purchasePrice = data.purchasePrice;
+                row.dataset.profitPercent = data.profitPercent;
+                row.dataset.roastType = data.roastType;
+                const finalPrice = data.purchasePrice * (1 + (data.profitPercent / 100));
+                priceDisplay.textContent = `${formatCurrency(finalPrice)} تومان`;
+                roastDisplay.textContent = `(${data.roastType})`;
+            } else {
+                showModal(row, coffeeType);
+            }
         }
 
         /**
@@ -882,7 +1039,7 @@ if (sections.bakwash) {
          * @param {string} powderType - The name of the powder product to add.
          * @returns {void} This function does not return a value.
          */
-        function createPowderRow(powderType) {
+        function createPowderRow(powderType, data = null) {
             const row = document.createElement('div');
             row.className = 'price-list-dynamic-row';
             const powderName = document.createElement('span');
@@ -892,21 +1049,22 @@ if (sections.bakwash) {
             const removeBtn = document.createElement('button');
             removeBtn.textContent = 'حذف';
             removeBtn.className = 'calc-button remove-row-btn';
-            removeBtn.onclick = () => row.remove();
+            removeBtn.onclick = () => {
+                row.remove();
+                savePriceListData();
+            };
             row.append(powderName, priceDisplay, removeBtn);
             powderListContainer.appendChild(row);
 
-            showModal(row, powderType, 'powder');
+            if (data) {
+                row.dataset.purchasePrice = data.purchasePrice;
+                row.dataset.profitPercent = data.profitPercent;
+                const finalPrice = data.purchasePrice * (1 + (data.profitPercent / 100));
+                priceDisplay.textContent = `${formatCurrency(finalPrice)} تومان`;
+            } else {
+                showModal(row, powderType, 'powder');
+            }
         }
-
-
-        /**
-         * Generates and triggers a download for an image of the current price list.
-         * This function gathers all the price list data, populates a hidden HTML template with it,
-         * and then uses the `html2canvas` library to render this template as a PNG image,
-         * which is then downloaded by the user. It handles cases with no content and provides alerts.
-         * @returns {void} This function does not return a value.
-         */
         function generateImage() {
             const brandName = document.getElementById('brand-name').value || 'کافه شما';
             const socialId = document.getElementById('social-id').value || '@your_cafe';
@@ -1053,5 +1211,25 @@ if (sections.bakwash) {
         });
 
         generateImageBtn.addEventListener('click', generateImage);
+        loadPriceListData();
+    }
+
+    // Initialize all functionalities
+    initializePersistentInputs();
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ####################################
+    // Reset All Data Logic
+    // ####################################
+    const resetAllDataBtn = document.getElementById('reset-all-data-btn');
+    if (resetAllDataBtn) {
+        resetAllDataBtn.addEventListener('click', () => {
+            if (confirm('آیا مطمئن هستید که می‌خواهید تمام داده‌های ذخیره شده را پاک کنید؟')) {
+                localStorage.clear();
+                alert('تمام داده‌ها با موفقیت پاک شدند.');
+                location.reload();
+            }
+        });
     }
 });

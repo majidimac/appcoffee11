@@ -48,6 +48,7 @@
                 <h3> بک واش </h3>
             </div>
         </div>
+        <button id="reset-all-data-btn" class="calc-button reset-all-btn">بازنشانی تمام داده‌ها</button>
     </div>
 
     <div id="calculator-section" style="display: none;">
@@ -56,23 +57,23 @@
             <button class="calc-button back-button">بازگشت به منو</button>
             <div class="input-group">
                 <label for="greenPrice">قیمت دانه سبز خریداری شده (تومان/کیلوگرم)</label>
-                <input type="number" id="greenPrice" value="500000" placeholder="مثال: 500000">
+                <input type="number" inputmode="numeric" id="greenPrice" value="500000" placeholder="مثال: 500000">
             </div>
             <div class="input-group">
                 <label for="roastWage">اجرت رُست (تومان/کیلوگرم)</label>
-                <input type="number" id="roastWage" value="20000" placeholder="مثال: 20000">
+                <input type="number" inputmode="numeric" id="roastWage" value="20000" placeholder="مثال: 20000">
             </div>
             <div class="input-group">
                 <label for="batchInput">مقدار دانه سبزی (گرم)</label>
-                <input type="number" id="batchInput" value="1000" placeholder="مثال: 1000">
+                <input type="number" inputmode="numeric" id="batchInput" value="1000" placeholder="مثال: 1000">
             </div>
             <div class="input-group">
                 <label for="batchOutput">مقدار خروجی دانه رُست شده (گرم)</label>
-                <input type="number" id="batchOutput" value="850" placeholder="مثال: 850">
+                <input type="number" inputmode="numeric" id="batchOutput" value="850" placeholder="مثال: 850">
             </div>
             <div class="input-group">
                 <label for="totalGreen">کل دانه سبز روز (کیلوگرم)</label>
-                <input type="number" id="totalGreen" value="15" placeholder="مثال: 15">
+                <input type="number" inputmode="numeric" id="totalGreen" value="15" placeholder="مثال: 15">
             </div>
             <button id="calculate-roast-btn" class="calc-button">محاسبه</button>
             <div class="result" id="results">
@@ -105,22 +106,22 @@
             <h2>ابزار محاسبه درآمد کافه (روزانه / ماهانه)</h2>
             <button class="calc-button back-button">بازگشت به منو</button>
             <div class="cafe-grid two-cols">
-                <div class="input-group"><label for="costPerKG">قیمت خرید میکس (تومان/کیلوگرم) *</label><input type="number" id="costPerKG" value="600000"></div>
-                <div class="input-group"><label for="sellPriceKG">قیمت فروش میکس (تومان)</label><input type="number" id="sellPriceKG" value="850000"></div>
-                <div class="input-group"><label for="costSingleShot">قیمت شات تک (تومان) *</label><input type="number" id="costSingleShot" value="45000"></div>
-                <div class="input-group"><label for="costDoubleShot">قیمت شات دبل (تومان)</label><input type="number" id="costDoubleShot" value="60000"></div>
+                <div class="input-group"><label for="costPerKG">قیمت خرید میکس (تومان/کیلوگرم) *</label><input type="number" inputmode="numeric" id="costPerKG" value="600000"></div>
+                <div class="input-group"><label for="sellPriceKG">قیمت فروش میکس (تومان)</label><input type="number" inputmode="numeric" id="sellPriceKG" value="850000"></div>
+                <div class="input-group"><label for="costSingleShot">قیمت شات تک (تومان) *</label><input type="number" inputmode="numeric" id="costSingleShot" value="45000"></div>
+                <div class="input-group"><label for="costDoubleShot">قیمت شات دبل (تومان)</label><input type="number" inputmode="numeric" id="costDoubleShot" value="60000"></div>
             </div>
             <h3>مصرف و هزینه‌های جانبی</h3>
             <div class="cafe-grid two-cols">
-                <div class="input-group"><label for="gramSingle">گرم مصرفی شات تک</label><input type="number" id="gramSingle" value="18"></div>
-                <div class="input-group"><label for="gramDouble">گرم مصرفی شات دبل</label><input type="number" id="gramDouble" value="20"></div>
-                <div class="input-group"><label for="otherCostPerShot">هزینه جانبی هر شات</label><input type="number" id="otherCostPerShot" value="5000"></div>
+                <div class="input-group"><label for="gramSingle">گرم مصرفی شات تک</label><input type="number" inputmode="numeric" id="gramSingle" value="18"></div>
+                <div class="input-group"><label for="gramDouble">گرم مصرفی شات دبل</label><input type="number" inputmode="numeric" id="gramDouble" value="20"></div>
+                <div class="input-group"><label for="otherCostPerShot">هزینه جانبی هر شات</label><input type="number" inputmode="numeric" id="otherCostPerShot" value="5000"></div>
             </div>
             <h3>تعداد فروش روزانه</h3>
             <div class="cafe-grid two-cols">
-                <div class="input-group"><label for="salesSingle">تعداد فروش تک</label><input type="number" id="salesSingle" value="100"></div>
-                <div class="input-group"><label for="salesDouble">تعداد فروش دبل</label><input type="number" id="salesDouble" value="50"></div>
-                <div class="input-group"><label for="salesMixKG">فروش قهوه (کیلوگرم)</label><input type="number" id="salesMixKG" value="1"></div>
+                <div class="input-group"><label for="salesSingle">تعداد فروش تک</label><input type="number" inputmode="numeric" id="salesSingle" value="100"></div>
+                <div class="input-group"><label for="salesDouble">تعداد فروش دبل</label><input type="number" inputmode="numeric" id="salesDouble" value="50"></div>
+                <div class="input-group"><label for="salesMixKG">فروش قهوه (کیلوگرم)</label><input type="number" inputmode="numeric" id="salesMixKG" value="1"></div>
             </div>
             <button id="calculate-cafe-btn" class="calc-button">محاسبه</button>
             <div class="result" id="cafe-results">
@@ -135,18 +136,18 @@
             <button class="calc-button back-button">بازگشت به منو</button>
             <div class="stopwatch-inputs">
                 <div class="input-group">
-                    <input type="number" id="stage1-minutes" value="15" min="0" max="59" placeholder="دقیقه ۱">
+                    <input type="number" inputmode="numeric" id="stage1-minutes" value="15" min="0" max="59" placeholder="دقیقه ۱">
                 </div>
                 <div class="input-group">
-                    <input type="number" id="stage1-seconds" value="30" min="0" max="59" placeholder="ثانیه ۱">
+                    <input type="number" inputmode="numeric" id="stage1-seconds" value="30" min="0" max="59" placeholder="ثانیه ۱">
                 </div>
             </div>
              <div class="stopwatch-inputs">
                 <div class="input-group">
-                    <input type="number" id="stage2-minutes" value="0" min="0" max="59" placeholder="دقیقه ۲">
+                    <input type="number" inputmode="numeric" id="stage2-minutes" value="0" min="0" max="59" placeholder="دقیقه ۲">
                 </div>
                 <div class="input-group">
-                    <input type="number" id="stage2-seconds" value="30" min="0" max="59" placeholder="ثانیه ۲">
+                    <input type="number" inputmode="numeric" id="stage2-seconds" value="30" min="0" max="59" placeholder="ثانیه ۲">
                 </div>
             </div>
             <p id="stage-indicator" style="display: none; height: 1.5em;"></p>
@@ -264,11 +265,11 @@
             </div>
             <div class="input-group">
                 <label for="modal-purchase-price">قیمت خرید (تومان/کیلوگرم)</label>
-                <input type="number" id="modal-purchase-price" placeholder="مثال: 500000">
+                <input type="number" inputmode="numeric" id="modal-purchase-price" placeholder="مثال: 500000">
             </div>
             <div class="input-group">
                 <label for="modal-profit-percent">درصد سود</label>
-                <input type="number" id="modal-profit-percent" placeholder="مثال: 30">
+                <input type="number" inputmode="numeric" id="modal-profit-percent" placeholder="مثال: 30">
             </div>
             <button id="modal-confirm-btn" class="calc-button">تایید</button>
         </div>

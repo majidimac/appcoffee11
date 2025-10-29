@@ -78,3 +78,11 @@ This is a static web application and requires no complex setup or backend server
     *   Theme switching and clock functionality.
     *   Dynamic HTML generation for features like the bean mix and price list calculators.
 *   `image/`: A directory containing the SVG and PNG icons used in the main menu cards and other UI elements.
+
+## Contributing
+
+Contributions are welcome! If you have ideas for new features, bug fixes, or improvements, please feel free to contribute. To do so, please fork the repository and submit a pull request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.

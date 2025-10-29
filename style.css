@@ -754,3 +754,13 @@ html[data-theme="dark"] .input-group select {
 #image-output-template p strong {
     color: #0056b3 !important; /* A slightly different dark color for emphasis */
 }
+
+.reset-all-btn {
+    display: block;
+    margin: 2rem auto;
+    width: 90%;
+    max-width: 300px;
+    background-color: var(--danger-color);
+    color: white;
+    font-weight: bold;
+}
